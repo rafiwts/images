@@ -5,7 +5,6 @@ from .serializers import CreateImageSerializer, ListImageSerializer
 
 
 class ListImageView(generics.ListAPIView):
-    # TODO: add which user should upload an image - now there is no user
     queryset = UploadedImage.objects.all()
     serializer_class = ListImageSerializer
 
