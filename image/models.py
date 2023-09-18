@@ -1,8 +1,9 @@
+from django.conf import settings
 from django.db import models
 
-from user.models import User
-
 from .handlers import image_name_handler
+
+User = settings.AUTH_USER_MODEL
 
 
 class UploadedImage(models.Model):
@@ -18,8 +19,8 @@ class UploadedImage(models.Model):
 
 
 class ThumbnailType(models.Model):
-    width = models.ImageField(models.Model)
-    height = models.ImageField(models.Model)
+    width = models.IntegerField(models.Model)
+    heigth = models.IntegerField(models.Model)
 
     def __str__(self):
-        return f"{self.width}x{self.height}"
+        return f"{self.width}x{self.heigth}"
