@@ -141,6 +141,6 @@ AUTH_USER_MODEL = "user.User"
 
 # CELERY SETTINGS
 # TODO: think about the implementation of asyncio
-CELERY_BACKEND = "redis://localhost:6379/3"
-CELERY_BROKER_URL = "redis://localhost:6379/4"
-CELERY_RESULT_BACKEND = "redis://localhost:6379/5"
+CELERY_BACKEND = "redis://redis:6379"
+CELERY_BROKER_URL = "redis://redis:6379"
+CELERY_RESULT_BACKEND = "redis://redis:6379"

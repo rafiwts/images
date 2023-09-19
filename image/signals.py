@@ -6,8 +6,9 @@ from .thumbnail_handlers import change_to_thumbnails
 
 
 @receiver(post_save, sender=UploadedImage)
-async def create_thumbnails(sender, instance: UploadedImage, **kwargs):
+# create a celery in docker so it works proprely
+def create_thumbnails(sender, instance: UploadedImage, **kwargs):
     """
     asynchronous implementation enables efficient handling of requests
     """
-    await change_to_thumbnails(instance.id)
+    change_to_thumbnails.delay(instance.id)
