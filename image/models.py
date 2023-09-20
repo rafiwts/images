@@ -19,8 +19,17 @@ class UploadedImage(models.Model):
 
 
 class ThumbnailType(models.Model):
-    width = models.IntegerField(models.Model)
-    heigth = models.IntegerField(models.Model)
+    height = models.IntegerField(models.Model)
 
     def __str__(self):
-        return f"{self.width}x{self.heigth}"
+        return f"{self.height}"
+
+
+class Thumbnail(models.Model):
+    image = models.ForeignKey(
+        UploadedImage, on_delete=models.CASCADE, related_name="thumbnails"
+    )
+    thumbnail = models.ImageField(upload_to=image_path_handler, null=True)
+    user = models.ForeignKey(
+        "user.User", on_delete=models.CASCADE, related_name="thumbnails"
+    )

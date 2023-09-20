@@ -11,4 +11,4 @@ def image_path_handler(instance, filename):
     """
     it creates path for image
     """
-    return f"{instance.user.id}/images/{instance.id}/{filename}"
+    return f"{instance.user.id}/images/{filename}"
