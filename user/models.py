@@ -15,7 +15,7 @@ class User(AbstractUser):
 
 class AccountTier(models.Model):
     name = models.CharField(max_length=50)
-    thumbnail_size = models.ManyToManyField(ThumbnailType, blank=True)
+    thumbnail_height = models.ManyToManyField(ThumbnailType, blank=True)
     link_to_uploaded_file = models.BooleanField(
         default=False, verbose_name="Uploaded file"
     )
@@ -25,6 +25,6 @@ class AccountTier(models.Model):
         return self.name
 
     @property
-    def get_thumbnail_sizes(self):
-        thumbnail_size = self.thumbnail_size.all()
-        return thumbnail_size
+    def get_thumbnail_height(self):
+        thumbnail_height = self.thumbnail_height.all()
+        return thumbnail_height

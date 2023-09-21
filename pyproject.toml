@@ -18,7 +18,7 @@ psycopg2-binary = "^2.9.7"
 pytest-django = "^4.5.2"
 
 [tool.ruff]
-ignore = ["E501"]
+ignore = ["E501", "E712", "F811"]
 
 [tool.pytest.ini_options]
 DJANGO_SETTINGS_MODULE = "images.settings"
