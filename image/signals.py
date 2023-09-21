@@ -43,6 +43,7 @@ def resize_image(image, height, user_id):
         f"{user_id}/images/thumbnail_{width}x{height}_{os.path.basename(image.path)}"
     )
 
+    # FIXME: path issue
     print(thumbnail_path)
 
     img.save(thumbnail_path, "png")  # You can change the format as needed
