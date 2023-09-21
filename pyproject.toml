@@ -16,6 +16,7 @@ celery = "^5.3.4"
 redis = "^5.0.0"
 psycopg2-binary = "^2.9.7"
 pytest-django = "^4.5.2"
+freezegun = "^1.2.2"
 
 [tool.ruff]
 ignore = ["E501", "E712", "F811"]

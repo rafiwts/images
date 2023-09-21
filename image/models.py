@@ -12,6 +12,10 @@ class UploadedImage(models.Model):
     uploaded_at = models.DateTimeField(auto_now_add=True)
     user = models.ForeignKey(User, on_delete=models.CASCADE, related_name="images")
 
+    @property
+    def get_orignal_url(self):
+        return self.image.url
+
     def __str__(self):
         file = self.image.name
         file_name = image_name_handler(file)

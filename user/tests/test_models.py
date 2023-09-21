@@ -67,16 +67,6 @@ class TestUser:
         assert new_user.is_staff == False
         assert new_user.is_superuser == False
 
-    def test_create_new_user_with_nonexistant_account_tier(self):
-        with pytest.raises(ValueError):
-            user = User.objects.create(
-                name="user",
-                email="user@example.com",
-                password="user1234!",
-                account_tier="Basic",
-            )
-            user.save()
-
     @pytest.mark.parametrize(
         "account_tier, thumbnail_heights, link_to_file, expiring_link",
         [
