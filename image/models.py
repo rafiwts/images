@@ -1,7 +1,15 @@
+from datetime import datetime
+
 from django.conf import settings
 from django.db import models
+from django.utils.translation import gettext_lazy as _
 
-from .image_handlers import image_name_handler, image_path_handler
+from .image_handlers import (
+    image_name_handler,
+    image_path_handler,
+    thumbnail_path_handler,
+)
+from .validators import validate_expiration_time
 
 User = settings.AUTH_USER_MODEL
 
@@ -33,7 +41,34 @@ class Thumbnail(models.Model):
     image = models.ForeignKey(
         UploadedImage, on_delete=models.CASCADE, related_name="thumbnails"
     )
-    thumbnail = models.ImageField(upload_to=image_path_handler, null=True)
+    thumbnail = models.ImageField(upload_to=thumbnail_path_handler, null=True)
     user = models.ForeignKey(
         "user.User", on_delete=models.CASCADE, related_name="thumbnails"
     )
+
+
+class ExpiringLinkAccess(models.Model):
+    image = models.OneToOneField(
+        "UploadedImage",
+        on_delete=models.CASCADE,
+        unique=True,
+        related_name="expiring_link",
+    )
+    link = models.CharField(max_length=200, null=True)
+    user = models.ForeignKey(
+        "user.User", on_delete=models.CASCADE, related_name="expiring_link"
+    )
+    created_at = models.DateTimeField(auto_now_add=True)
+    expiration_time = models.IntegerField(
+        validators=[validate_expiration_time],
+        null=False,
+        blank=False,
+        verbose_name=_("Expiration time (in seconds)"),
+    )
+
+    def has_expired(self):
+        current_time = datetime.now()
+        if current_time > self.expiration_time:
+            return True
+        else:
+            return False
