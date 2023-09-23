@@ -4,11 +4,7 @@ from django.conf import settings
 from django.db import models
 from django.utils.translation import gettext_lazy as _
 
-from .image_handlers import (
-    image_name_handler,
-    image_path_handler,
-    thumbnail_path_handler,
-)
+from .handlers import image_name_handler, image_path_handler, thumbnail_path_handler
 from .validators import validate_expiration_time
 
 User = settings.AUTH_USER_MODEL
@@ -54,7 +50,7 @@ class ExpiringLinkAccess(models.Model):
         unique=True,
         related_name="expiring_link",
     )
-    link = models.CharField(max_length=200, null=True)
+    link_id = models.CharField(max_length=200, null=True)
     user = models.ForeignKey(
         "user.User", on_delete=models.CASCADE, related_name="expiring_link"
     )
@@ -68,7 +64,8 @@ class ExpiringLinkAccess(models.Model):
 
     def has_expired(self):
         current_time = datetime.now()
-        if current_time > self.expiration_time:
-            return True
-        else:
-            return False
+
+        return (
+            current_time.timestamp() - self.created_at.timestamp()
+            >= self.expiration_time
+        )

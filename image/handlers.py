@@ -20,3 +20,7 @@ def thumbnail_path_handler(instance, filename):
     it creates path for image
     """
     return f"media/{instance.user.id}/images/{filename}"
+
+
+def generate_link_handler(request, link_id):
+    return request.build_absolute_uri(f"/api/link/{link_id}")

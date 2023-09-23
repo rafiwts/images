@@ -1,4 +1,3 @@
-from django.core import signing
 from django.http import HttpResponseBadRequest, HttpResponseRedirect
 from rest_framework import generics, status
 from rest_framework.response import Response
@@ -6,7 +5,8 @@ from rest_framework.response import Response
 from .models import ExpiringLinkAccess, UploadedImage
 from .serializers import (
     CreateImageSerializer,
-    ListExpiringLinksSerializer,
+    ExpiringLinkSerializer,
+    ListExpiringLinkSerializer,
     ListImageSerializer,
 )
 
@@ -24,27 +24,29 @@ class CreateImageView(generics.CreateAPIView):
     serializer_class = CreateImageSerializer
 
 
-class ExpiringLinkRetrieveView(generics.RetrieveAPIView):
-    serializer_class = ListExpiringLinksSerializer
+class RetrieveExpiringLinkView(generics.RetrieveAPIView):
+    serializer_class = ListExpiringLinkSerializer
 
-    def get(self, request, pk):
-        try:
-            instance = ExpiringLinkAccess.objects.get(pk=pk)
-        except ExpiringLinkAccess.DoesNotExist:
-            return HttpResponseBadRequest("Image not found")
+    def get(self, request, link_id):
+        expiring_link = ExpiringLinkAccess.objects.get(link_id=link_id)
 
-        url = signing.dumps({"image_id": instance.id}, salt="expiring-link")
+        if expiring_link.has_expired():
+            # TODO: it deletes after clicking on it or maybe I shoild not delete it
+            expiring_link.delete()
+            return HttpResponseBadRequest("The link has already expired")
 
-        image_url = request.build_absolute_uri(instance.image.image.url)
-
-        url = image_url
-        print(url)
-        return HttpResponseRedirect(url)
+        image_url = request.build_absolute_uri(expiring_link.image.image.url)
+        return HttpResponseRedirect(image_url)
 
 
-class ExpiringLinkListCreateView(generics.ListAPIView):
+class CreateExiringLinkView(generics.CreateAPIView):
     queryset = ExpiringLinkAccess.objects.all()
-    serializer_class = ListExpiringLinksSerializer
+    serializer_class = ExpiringLinkSerializer
+
+
+class ListExpiringLinkView(generics.ListAPIView):
+    queryset = ExpiringLinkAccess.objects.all()
+    serializer_class = ListExpiringLinkSerializer
 
     def get_queryset(self):
         user = self.request.user
@@ -55,7 +57,6 @@ class ExpiringLinkListCreateView(generics.ListAPIView):
 
     def list(self, request, *args, **kwargs):
         account_tier = self.request.user.account_tier
-        print(account_tier)
 
         if not account_tier or account_tier.is_expiring_link == False:
             error_message = (
@@ -66,4 +67,6 @@ class ExpiringLinkListCreateView(generics.ListAPIView):
                 {"detail": error_message}, status=status.HTTP_400_BAD_REQUEST
             )
 
-        return super().list(request, *args, **kwargs)
+        current_list = super().list(request, *args, **kwargs)
+
+        return current_list

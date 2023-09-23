@@ -1,5 +1,9 @@
-from rest_framework import serializers
+import uuid
 
+from rest_framework import serializers
+from rest_framework.exceptions import PermissionDenied
+
+from .handlers import generate_link_handler
 from .models import ExpiringLinkAccess, Thumbnail, UploadedImage
 
 
@@ -45,17 +49,40 @@ class CreateImageSerializer(serializers.ModelSerializer):
         context = self.context["request"].user
         data["user"] = context
         queryset = UploadedImage.objects.create(**data)
+
         return queryset
 
 
-class ListExpiringLinksSerializer(serializers.ModelSerializer):
+class ListExpiringLinkSerializer(serializers.ModelSerializer):
     class Meta:
         model = ExpiringLinkAccess
-        fields = ("link",)
+        fields = ("link_id",)
+
+    def to_representation(self, instance):
+        representation = super().to_representation(instance)
+        request = self.context["request"]
+        representation["link_id"] = generate_link_handler(
+            request, representation["link_id"]
+        )
+
+        return representation
 
 
 class ExpiringLinkSerializer(serializers.ModelSerializer):
     class Meta:
         model = ExpiringLinkAccess
-        fields = ("id", "image", "expiration_time", "created_at")
-        # TODO: add url for creating a image with a link
+        fields = ("image", "expiration_time")
+
+    def create(self, data):
+        user = self.context["request"].user
+
+        # it does not allow unauthorized users to fetch links
+        if not user.account_tier or not user.account_tier.is_expiring_link:
+            raise PermissionDenied("You are not authorized to generate custom links")
+
+        data["user"] = user
+        data["link_id"] = uuid.uuid4()
+
+        queryset = ExpiringLinkAccess.objects.create(**data)
+
+        return queryset
