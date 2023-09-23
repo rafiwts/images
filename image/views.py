@@ -9,6 +9,7 @@ from .serializers import (
     ListExpiringLinkSerializer,
     ListImageSerializer,
 )
+from .validators import permission_validation_error
 
 
 class ListImageView(generics.ListAPIView):
@@ -59,12 +60,9 @@ class ListExpiringLinkView(generics.ListAPIView):
         account_tier = self.request.user.account_tier
 
         if not account_tier or account_tier.is_expiring_link == False:
-            error_message = (
-                "You do not have permission to access fetch the link to the file."
-            )
-
             return Response(
-                {"detail": error_message}, status=status.HTTP_400_BAD_REQUEST
+                {"detail": permission_validation_error()},
+                status=status.HTTP_400_BAD_REQUEST,
             )
 
         current_list = super().list(request, *args, **kwargs)

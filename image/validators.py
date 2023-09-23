@@ -10,3 +10,9 @@ def validate_expiration_time(value):
             _("Value must be between %(min_value)s and %(max_value)s."),
             params={"min_value": min_value, "max_value": max_value},
         )
+
+
+def permission_validation_error():
+    error_message = "You do not have permission to access fetch the link to the file."
+
+    return error_message

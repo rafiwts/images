@@ -86,3 +86,8 @@ class ExpiringLinkSerializer(serializers.ModelSerializer):
         queryset = ExpiringLinkAccess.objects.create(**data)
 
         return queryset
+
+    def get_queryset(self):
+        # FIXME: return only images for a given user
+        user = self.context["request"].user
+        return ExpiringLinkAccess.objects.filter(user=user)

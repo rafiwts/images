@@ -5,19 +5,19 @@ from django.urls import path
 from .views import (
     CreateExiringLinkView,
     CreateImageView,
-    ExpiringLinkListCreateView,
-    ExpiringLinkRetrieveView,
+    ListExpiringLinkView,
     ListImageView,
+    RetrieveExpiringLinkView,
 )
 
 urlpatterns = [
     path("images/", ListImageView.as_view(), name="image-list"),
     path("upload-images/", CreateImageView.as_view(), name="image-create"),
-    path("expiring-links/", ExpiringLinkListCreateView.as_view(), name="link-list"),
+    path("expiring-links/", ListExpiringLinkView.as_view(), name="link-list"),
     path("create-link/", CreateExiringLinkView.as_view(), name="create-link"),
     path(
         "link/<str:link_id>/",
-        ExpiringLinkRetrieveView.as_view(),
+        RetrieveExpiringLinkView.as_view(),
         name="link-detail",
     ),
 ]
