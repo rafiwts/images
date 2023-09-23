@@ -3,6 +3,8 @@
 import os
 import sys
 
+import gunicorn  # noqa: F401
+
 
 def main():
     """Run administrative tasks."""

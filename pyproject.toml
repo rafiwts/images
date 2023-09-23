@@ -12,11 +12,11 @@ djangorestframework = "^3.14.0"
 pre-commit = "^3.4.0"
 python-dotenv = "^1.0.0"
 pillow = "^10.0.1"
-celery = "^5.3.4"
 redis = "^5.0.0"
 psycopg2-binary = "^2.9.7"
 pytest-django = "^4.5.2"
 freezegun = "^1.2.2"
+gunicorn = "^21.2.0"
 
 [tool.ruff]
 ignore = ["E501", "E712", "F811"]
