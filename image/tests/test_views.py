@@ -23,7 +23,6 @@ class TestApiViews:
 
     @override_settings(MEDIA_ROOT=tempfile.gettempdir())
     def test_upload_image_view(self, client, image_file):
-        # FIXME: path issue for thumbnails
         superuser = User.objects.get(username="image")
         client.login(username="image", password="image1234!")
         url = reverse("image-create")
@@ -42,7 +41,6 @@ class TestApiViews:
     def test_upload_image_view_with_invalid_file(self, client, image_file):
         invalid_file = SimpleUploadedFile("test_file.txt", b"file_content")
 
-        # FIXME: path issue for thumbnails
         client.login(username="image", password="image1234!")
         url = reverse("image-create")
 
@@ -108,7 +106,6 @@ class TestApiViews:
 
     @override_settings(MEDIA_ROOT=tempfile.gettempdir())
     def test_create_link_view_with_authorized_user(self, client, image_file):
-        # FIXME: path issue for thumbnails, it creates thumbnails while testing
         superuser = User.objects.get(username="enterprise")
         image = UploadedImage.objects.create(image=image_file, user=superuser)
         client.login(username="enterprise", password="enterprise1234!")
@@ -125,7 +122,6 @@ class TestApiViews:
 
     @override_settings(MEDIA_ROOT=tempfile.gettempdir())
     def test_create_link_view_with_invalid_expiration_time(self, client, image_file):
-        # FIXME: path issue for thumbnails, it creates thumbnails while testing
         superuser = User.objects.get(username="enterprise")
         image = UploadedImage.objects.create(image=image_file, user=superuser)
         client.login(username="enterprise", password="enterprise1234!")
@@ -176,5 +172,3 @@ class TestApiViews:
 
         # created url redirects to a link with an image
         assert response.status_code == 301
-
-    # FIXME: test for thumbnail after resolving the path issue - the test throws an error

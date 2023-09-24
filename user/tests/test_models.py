@@ -14,14 +14,18 @@ class TestUser:
             ("enterprise", "enterprise@example.com"),
         ],
     )
-    def test_existing_superusers(self, name, email):
-        superuser = User.objects.get(username=name, email=email)
+    def test_existing_users(self, name, email):
+        user = User.objects.get(username=name, email=email)
 
-        assert superuser.username == name
-        assert superuser.email == email
-        assert superuser.is_active == True
-        assert superuser.is_staff == True
-        assert superuser.is_superuser == True
+        assert user.username == name
+        assert user.email == email
+        assert user.is_active == True
+        assert user.is_staff == True
+
+        if user.username == "image":
+            assert user.is_superuser == True
+        else:
+            assert user.is_superuser == False
 
     @pytest.mark.parametrize(
         "name, account_tier",

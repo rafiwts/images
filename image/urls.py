@@ -12,7 +12,7 @@ from .views import (
 
 urlpatterns = [
     path("images/", ListImageView.as_view(), name="image-list"),
-    path("upload-images/", CreateImageView.as_view(), name="image-create"),
+    path("upload-image/", CreateImageView.as_view(), name="image-create"),
     path("expiring-links/", ListExpiringLinkView.as_view(), name="link-list"),
     path("create-link/", CreateExiringLinkView.as_view(), name="create-link"),
     path(

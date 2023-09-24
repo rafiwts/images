@@ -17,9 +17,17 @@ Including another URLconf
 from django.conf import settings
 from django.conf.urls.static import static
 from django.contrib import admin
-from django.urls import include, path
+from django.shortcuts import redirect
+from django.urls import include, path, reverse
+
+
+# redirecting to admin page
+def redirect_to_admin(request):
+    return redirect(reverse("admin:index"))
+
 
 urlpatterns = [
+    path("", redirect_to_admin),
     path("admin/", admin.site.urls),
     path("api/", include("image.urls")),
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

@@ -12,9 +12,6 @@ def create_bultin_tiers(sender, **kwargs):
     """
     if AccountTier.objects.filter(name="Basic").exists():
         return
-    global basic_account
-    global premium_account
-    global enterprise_account
 
     # bult-in basic account with thumbnails
     basic_account = AccountTier(
@@ -50,21 +47,34 @@ def create_bultin_tiers(sender, **kwargs):
 
 
 @receiver(post_migrate)
-def create_superuser(sender, **kwargs):
+def create_users(sender, **kwargs):
     if User.objects.filter(username="image").exists():
         return
 
-    # create 4 superusers
+    basic_account = AccountTier.objects.get(name="Basic")
+    premium_account = AccountTier.objects.get(name="Premium")
+    enterprise_account = AccountTier.objects.get(name="Enterprise")
+
+    # create 1 superuser and 3 staffusers
     User.objects.create_superuser("image", "image@example.com", "image1234!")
-    User.objects.create_superuser(
-        "basic", "basic@example.com", "basic1234!", account_tier=basic_account
+    User.objects.create_user(
+        "basic",
+        "basic@example.com",
+        "basic1234!",
+        account_tier=basic_account,
+        is_staff=True,
     )
-    User.objects.create_superuser(
-        "premium", "premium@example.com", "premium1234!", account_tier=premium_account
+    User.objects.create_user(
+        "premium",
+        "premium@example.com",
+        "premium1234!",
+        account_tier=premium_account,
+        is_staff=True,
     )
-    User.objects.create_superuser(
+    User.objects.create_user(
         "enterprise",
         "enterprise@example.com",
         "enterprise1234!",
         account_tier=enterprise_account,
+        is_staff=True,
     )

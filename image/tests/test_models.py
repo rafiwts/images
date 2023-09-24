@@ -32,8 +32,8 @@ class TestUploadedImage:
     @override_settings(MEDIA_ROOT=tempfile.gettempdir())
     def test_uploading_file_url(self, custom_user, temporary_image_one):
         mock_image = temporary_image_one
-        # TODO: improve the test
-        filepath = f"/media{mock_image.name}"
+
+        filepath = f"{mock_image.name}"
 
         uploaded_image = UploadedImage.objects.create(
             image=mock_image.name, user=custom_user

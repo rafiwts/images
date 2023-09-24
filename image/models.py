@@ -11,7 +11,6 @@ User = settings.AUTH_USER_MODEL
 
 
 class UploadedImage(models.Model):
-    # TODO: add a url for an image
     image = models.ImageField(upload_to=image_path_handler)
     uploaded_at = models.DateTimeField(auto_now_add=True)
     user = models.ForeignKey(User, on_delete=models.CASCADE, related_name="images")

@@ -7,19 +7,17 @@ def image_name_handler(image):
 
 
 def image_path_handler(instance, filename):
-    # FIXME: instance.id returns None in a path
-    """
-    it creates path for image
-    """
-    return f"{instance.user.id}/images/{filename}"
-
-
-def thumbnail_path_handler(instance, filename):
-    # FIXME: instance.id returns None in a path
     """
     it creates path for image
     """
     return f"media/{instance.user.id}/images/{filename}"
+
+
+def thumbnail_path_handler(instance, filename):
+    """
+    it creates path for image
+    """
+    return f"{instance.user.id}/images/{filename}"
 
 
 def generate_link_handler(request, link_id):

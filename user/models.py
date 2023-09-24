@@ -14,7 +14,7 @@ class User(AbstractUser):
 
 
 class AccountTier(models.Model):
-    name = models.CharField(max_length=50)
+    name = models.CharField(max_length=50, unique=True)
     thumbnail_height = models.ManyToManyField(ThumbnailType, blank=True)
     link_to_uploaded_file = models.BooleanField(
         default=False, verbose_name="Uploaded file"

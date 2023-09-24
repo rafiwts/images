@@ -9,25 +9,27 @@ from .models import Thumbnail, UploadedImage
 
 @receiver(models.signals.post_save, sender=UploadedImage)
 def create_thumbnails(sender, instance, created, **kwargs):
-    if created:
-        if instance.user.account_tier:
-            account_tier = instance.user.account_tier
-            thumbnails = account_tier.get_thumbnail_height
+    if not created:
+        return
 
-            thumbnail_heights = []
+    if instance.user.account_tier:
+        account_tier = instance.user.account_tier
+        thumbnails = account_tier.get_thumbnail_height
 
-            for thumbnail in thumbnails:
-                thumbnail_heights.append(thumbnail.height)
+        thumbnail_heights = []
 
-            # create and save thumbnails for each height available
-            for height in thumbnail_heights:
-                thumbnail = Thumbnail(
-                    image=instance,
-                    thumbnail=resize_image(instance.image, height, instance.user.id),
-                    user=instance.user,
-                )
+        for thumbnail in thumbnails:
+            thumbnail_heights.append(thumbnail.height)
 
-                thumbnail.save()
+        # create and save thumbnails for each height available
+        for height in thumbnail_heights:
+            thumbnail = Thumbnail(
+                image=instance,
+                thumbnail=resize_image(instance.image, height, instance.user.id),
+                user=instance.user,
+            )
+
+            thumbnail.save()
 
 
 def resize_image(image, height, user_id):
@@ -39,13 +41,8 @@ def resize_image(image, height, user_id):
 
     img.thumbnail((width, height))
 
-    thumbnail_path = (
-        f"{user_id}/images/thumbnail_{width}x{height}_{os.path.basename(image.path)}"
-    )
+    thumbnail_path = f"media/{user_id}/images/thumbnail_{width}x{height}_{os.path.basename(image.path)}"
 
-    # FIXME: path issue
-    print(thumbnail_path)
-
-    img.save(thumbnail_path, "png")  # You can change the format as needed
+    img.save(thumbnail_path, "png")
 
     return thumbnail_path
