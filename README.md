@@ -83,18 +83,18 @@ gunicorn images.wsgi -w 10
 
 ### The following urls are available on the server:
 
-http://127.0.0.1:8000/admin/ - a link to administration site
-http://127.0.0.1:8000/api/upload-image/ - a link to upload images for a logged-in users
-http://127.0.0.1:8000/api/images/ - a link to uploaded images for a logged-in user
-http://127.0.0.1:8000/api/create-link/ - a link to create an expiring link by an authorized user
-http://127.0.0.1:8000/api/expiring-links/ - a link to expiring link for an authorized user
+- http://127.0.0.1:8000/admin/ - a link to administration site
+- http://127.0.0.1:8000/api/upload-image/ - a link to upload images for a logged-in users
+- http://127.0.0.1:8000/api/images/ - a link to uploaded images for a logged-in user
+- http://127.0.0.1:8000/api/create-link/ - a link to create an expiring link by an authorized user
+- http://127.0.0.1:8000/api/expiring-links/ - a link to expiring link for an authorized user
 
 ### There are also 4 built-in users:
-superuser with no account tier:
-- username: image / password: image1234!
-user with basic account tier:
-- username: basic / password: basic1234!
-user with premium account tier:
-- username: premium / password: premium1234!
-user with enterprise account tier:
-- username: enterprise / password: enterprise1234!
+
+- username: image / password: image1234! - superuser with no account tier:
+
+- username: basic / password: basic1234! - user with basic account tier:
+
+- username: premium / password: premium1234! - user with premium account tier:
+
+- username: enterprise / password: enterprise1234! - user with enterprise account tier:
