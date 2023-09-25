@@ -106,8 +106,8 @@ class TestApiViews:
 
     @override_settings(MEDIA_ROOT=tempfile.gettempdir())
     def test_create_link_view_with_authorized_user(self, client, image_file):
-        superuser = User.objects.get(username="enterprise")
-        image = UploadedImage.objects.create(image=image_file, user=superuser)
+        enterprise_user = User.objects.get(username="enterprise")
+        image = UploadedImage.objects.create(image=image_file, user=enterprise_user)
         client.login(username="enterprise", password="enterprise1234!")
 
         url = reverse("create-link")
@@ -118,12 +118,28 @@ class TestApiViews:
 
         assert response.status_code == 201
         assert ExpiringLinkAccess.objects.count() == 1
-        assert ExpiringLinkAccess.objects.filter(user=superuser).count() == 1
+        assert ExpiringLinkAccess.objects.filter(user=enterprise_user).count() == 1
+
+    @override_settings(MEDIA_ROOT=tempfile.gettempdir())
+    def test_create_link_view_for_unauthorized_images(self, client, image_file):
+        superuser = User.objects.get(username="image")
+        enterprise_user = User.objects.get(username="enterprise")  # noqa: F841
+
+        image = UploadedImage.objects.create(image=image_file, user=superuser)
+        client.login(username="enterprise", password="enterprise1234!")
+
+        url = reverse("create-link")
+
+        data = {"image": image.id, "expiration_time": 3000}
+
+        response = client.post(url, data)
+
+        assert response.status_code == 403
 
     @override_settings(MEDIA_ROOT=tempfile.gettempdir())
     def test_create_link_view_with_invalid_expiration_time(self, client, image_file):
-        superuser = User.objects.get(username="enterprise")
-        image = UploadedImage.objects.create(image=image_file, user=superuser)
+        enterprise_user = User.objects.get(username="enterprise")
+        image = UploadedImage.objects.create(image=image_file, user=enterprise_user)
         client.login(username="enterprise", password="enterprise1234!")
 
         url = reverse("create-link")
@@ -140,8 +156,8 @@ class TestApiViews:
 
     @override_settings(MEDIA_ROOT=tempfile.gettempdir())
     def test_create_link_view_with_unauthorized_user(self, client, image_file):
-        superuser = User.objects.get(username="basic")
-        image = UploadedImage.objects.create(image=image_file, user=superuser)
+        basic_user = User.objects.get(username="basic")
+        image = UploadedImage.objects.create(image=image_file, user=basic_user)
         client.login(username="basic", password="basic1234!")
 
         url = reverse("create-link")
@@ -155,8 +171,8 @@ class TestApiViews:
 
     @override_settings(MEDIA_ROOT=tempfile.gettempdir())
     def test_link_detail_view(self, client, image_file):
-        superuser = User.objects.get(username="enterprise")
-        image = UploadedImage.objects.create(image=image_file, user=superuser)
+        enterprise_user = User.objects.get(username="enterprise")
+        image = UploadedImage.objects.create(image=image_file, user=enterprise_user)
         client.login(username="enterprise", password="enterprise1234!")
 
         url = reverse("create-link")
@@ -171,4 +187,4 @@ class TestApiViews:
         response = client.get(link)
 
         # created url redirects to a link with an image
-        assert response.status_code == 301
+        assert response.status_code == 302

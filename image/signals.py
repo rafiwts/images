@@ -22,14 +22,17 @@ def create_thumbnails(sender, instance, created, **kwargs):
             thumbnail_heights.append(thumbnail.height)
 
         # create and save thumbnails for each height available
+        thumbnails = []
+
         for height in thumbnail_heights:
             thumbnail = Thumbnail(
                 image=instance,
                 thumbnail=resize_image(instance.image, height, instance.user.id),
                 user=instance.user,
             )
+            thumbnails.append(thumbnail)
 
-            thumbnail.save()
+        Thumbnail.objects.bulk_create(thumbnails)
 
 
 def resize_image(image, height, user_id):

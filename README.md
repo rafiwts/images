@@ -93,8 +93,8 @@ gunicorn images.wsgi -w 10
 
 - username: image / password: image1234! - superuser with no account tier:
 
-- username: basic / password: basic1234! - stuff user with basic account tier:
+- username: basic / password: basic1234! - staff user with basic account tier:
 
-- username: premium / password: premium1234! - stuff user with premium account tier:
+- username: premium / password: premium1234! - staff user with premium account tier:
 
-- username: enterprise / password: enterprise1234! - stuff user with enterprise account tier:
+- username: enterprise / password: enterprise1234! - staff user with enterprise account tier:

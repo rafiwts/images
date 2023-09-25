@@ -83,6 +83,12 @@ class ExpiringLinkSerializer(serializers.ModelSerializer):
         data["user"] = user
         data["link_id"] = uuid.uuid4()
 
+        # if an image does not belong to a user
+        if data["image"].user.id != user.id:
+            raise PermissionDenied(
+                "You cannot generate links for images that do not belong to you"
+            )
+
         queryset = ExpiringLinkAccess.objects.create(**data)
 
         return queryset

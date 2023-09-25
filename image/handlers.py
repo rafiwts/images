@@ -2,7 +2,8 @@ def image_name_handler(image):
     """
     it removes `media/` and `extension` from name
     """
-    name = image.split("/")[2].split(".")[0]
+    name = image.split("/")[3].split(".")[0]
+
     return name
 
 
@@ -21,4 +22,4 @@ def thumbnail_path_handler(instance, filename):
 
 
 def generate_link_handler(request, link_id):
-    return request.build_absolute_uri(f"/api/link/{link_id}")
+    return request.build_absolute_uri(f"/api/link/{link_id}/")
