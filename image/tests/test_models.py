@@ -71,7 +71,10 @@ class TestUploadedImage:
             image=mock_image.name, user=custom_user
         )
         thumbnail = Thumbnail.objects.create(
-            image=uploaded_image, thumbnail=mock_thumbnail.name, user=custom_user
+            image=uploaded_image,
+            thumbnail=mock_thumbnail.name,
+            height=200,
+            user=custom_user,
         )
 
         assert uploaded_image.image == thumbnail.image.image

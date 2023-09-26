@@ -3,7 +3,9 @@ import uuid
 from rest_framework import serializers
 from rest_framework.exceptions import PermissionDenied
 
-from .handlers import generate_link_handler
+from user.models import AccountTier
+
+from .handlers import generate_link_handler, thumbnails_response_handler
 from .models import ExpiringLinkAccess, Thumbnail, UploadedImage
 
 
@@ -26,17 +28,30 @@ class ListImageSerializer(serializers.ModelSerializer):
     def to_representation(self, instance):
         account_tier = instance.user.account_tier
 
-        # if the account tier exist - account_tier is not required
+        representation = super().to_representation(instance)
+
         if account_tier:
+            # get the response and override it with custom response
+            thumbnail_response = representation["thumbnails"]
+            thumbnail_heights = account_tier.get_thumbnail_height
+            account_tier = AccountTier.objects.get(name=account_tier.name)
+            custom_thumbnail_response = thumbnails_response_handler(
+                thumbnail_heights, thumbnail_response
+            )
             if account_tier.link_to_uploaded_file is False:
                 representation = super().to_representation(instance)
                 representation.pop("image", None)
+                representation["thumbnails"] = custom_thumbnail_response
             else:
                 representation = super().to_representation(instance)
+                representation["thumbnails"] = custom_thumbnail_response
         else:
             # if no account tier - only image url will be returned
             representation = super().to_representation(instance)
             representation.pop("thumbnails", None)
+
+        print(representation)
+
         return representation
 
 
@@ -56,22 +71,15 @@ class CreateImageSerializer(serializers.ModelSerializer):
 class ListExpiringLinkSerializer(serializers.ModelSerializer):
     class Meta:
         model = ExpiringLinkAccess
-        fields = ("link_id",)
-
-    def to_representation(self, instance):
-        representation = super().to_representation(instance)
-        request = self.context["request"]
-        representation["link_id"] = generate_link_handler(
-            request, representation["link_id"]
-        )
-
-        return representation
+        fields = ("link",)
 
 
 class ExpiringLinkSerializer(serializers.ModelSerializer):
+    link = serializers.CharField(read_only=True)
+
     class Meta:
         model = ExpiringLinkAccess
-        fields = ("image", "expiration_time")
+        fields = ("link", "image", "expiration_time")
 
     def create(self, data):
         user = self.context["request"].user
@@ -80,8 +88,12 @@ class ExpiringLinkSerializer(serializers.ModelSerializer):
         if not user.account_tier or not user.account_tier.is_expiring_link:
             raise PermissionDenied("You are not authorized to generate custom links")
 
+        request = self.context["request"]
+
+        link = generate_link_handler(request, uuid.uuid4())
+
         data["user"] = user
-        data["link_id"] = uuid.uuid4()
+        data["link"] = link
 
         # if an image does not belong to a user
         if data["image"].user.id != user.id:
@@ -92,8 +104,3 @@ class ExpiringLinkSerializer(serializers.ModelSerializer):
         queryset = ExpiringLinkAccess.objects.create(**data)
 
         return queryset
-
-    def get_queryset(self):
-        # FIXME: return only images for a given user
-        user = self.context["request"].user
-        return ExpiringLinkAccess.objects.filter(user=user)

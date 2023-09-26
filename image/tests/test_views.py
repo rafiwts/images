@@ -6,7 +6,6 @@ from django.core.files.uploadedfile import SimpleUploadedFile
 from django.test import override_settings
 from django.urls import reverse
 
-from image.handlers import generate_link_handler
 from image.models import ExpiringLinkAccess, UploadedImage
 from user.models import User
 
@@ -182,9 +181,8 @@ class TestApiViews:
         response = client.post(url, data)
 
         expiring_link = ExpiringLinkAccess.objects.get(image=image)
-        link = generate_link_handler(response.wsgi_request, expiring_link.link_id)
 
-        response = client.get(link)
+        response = client.get(expiring_link.link)
 
         # created url redirects to a link with an image
         assert response.status_code == 302

@@ -37,6 +37,7 @@ class Thumbnail(models.Model):
         UploadedImage, on_delete=models.CASCADE, related_name="thumbnails"
     )
     thumbnail = models.ImageField(upload_to=thumbnail_path_handler, null=True)
+    height = models.IntegerField(null=False, blank=False)
     user = models.ForeignKey(
         "user.User", on_delete=models.CASCADE, related_name="thumbnails"
     )
@@ -49,7 +50,9 @@ class ExpiringLinkAccess(models.Model):
         unique=True,
         related_name="expiring_link",
     )
-    link_id = models.CharField(max_length=200, null=True)
+    link = models.CharField(
+        max_length=200, null=True, verbose_name="Link (genereted automatically)"
+    )
     user = models.ForeignKey(
         "user.User", on_delete=models.CASCADE, related_name="expiring_link"
     )

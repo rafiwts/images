@@ -28,6 +28,7 @@ def create_thumbnails(sender, instance, created, **kwargs):
             thumbnail = Thumbnail(
                 image=instance,
                 thumbnail=resize_image(instance.image, height, instance.user.id),
+                height=height,
                 user=instance.user,
             )
             thumbnails.append(thumbnail)

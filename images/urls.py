@@ -21,7 +21,7 @@ from django.shortcuts import redirect
 from django.urls import include, path, reverse
 
 
-# redirecting to admin page
+# redirecting the home page to admin page
 def redirect_to_admin(request):
     return redirect(reverse("admin:index"))
 

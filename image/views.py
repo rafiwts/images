@@ -2,6 +2,7 @@ from django.http import HttpResponseBadRequest, HttpResponseRedirect
 from rest_framework import generics, status
 from rest_framework.response import Response
 
+from .handlers import generate_link_handler
 from .models import ExpiringLinkAccess, UploadedImage
 from .serializers import (
     CreateImageSerializer,
@@ -29,10 +30,10 @@ class RetrieveExpiringLinkView(generics.RetrieveAPIView):
     serializer_class = ListExpiringLinkSerializer
 
     def get(self, request, link_id):
-        expiring_link = ExpiringLinkAccess.objects.get(link_id=link_id)
+        link = generate_link_handler(request, link_id)
+        expiring_link = ExpiringLinkAccess.objects.get(link=link)
 
         if expiring_link.has_expired():
-            # TODO: it deletes after clicking on it or maybe I shoild not delete it
             expiring_link.delete()
             return HttpResponseBadRequest("The link has already expired")
 
